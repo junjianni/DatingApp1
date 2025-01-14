@@ -34,7 +34,7 @@
                     <a class="dropdown-item" (click)="logout()">Logout</a>
                 </div>
             </div>
-            }
+        }
 
         @if (!accountService.currentUser()) {
             <form #loginForm="ngForm" (ngSubmit)="login()" class="d-flex" autocomplete="off">

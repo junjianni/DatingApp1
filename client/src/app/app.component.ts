@@ -5,19 +5,20 @@ import { HttpClient } from '@angular/common/http';
 import { NavComponent } from "./nav/nav.component";
 import { AccountService } from './_services/account.service';
 import { HomeComponent } from "./home/home.component";
+import { NgxSpinnerComponent } from 'ngx-spinner';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavComponent, HomeComponent],
+  imports: [CommonModule, RouterOutlet, NavComponent, HomeComponent, NgxSpinnerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit{
   // title = 'client';
   // http = inject(HttpClient);
-  title = 'DatingApp';
-  users: any;
+  // title = 'DatingApp';
+  // users: any;
   private accountService = inject(AccountService);
 
   ngOnInit(): void {
