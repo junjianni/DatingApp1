@@ -8,6 +8,7 @@ import { PaginatedResult } from '../_models/pagination';
 import { UserParams } from '../_models/userParams';
 import { AccountService } from './account.service';
 // import { AccountService } from './account.service';
+import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class MembersService {
   paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
   memberCache = new Map();
   user = this.accountService.currentUser();
+  // userParams = model<UserParams>(new UserParams(this.user));
   userParams = model<UserParams>(new UserParams(this.user));
 
   resetUserParams() {
@@ -30,10 +32,10 @@ export class MembersService {
     const response = this.memberCache.get(Object.values(this.userParams()).join('-'));
     // if (response) return;
 
-    if (response) return this.setPaginatedResponse(response);
+    if (response) return setPaginatedResponse(response, this.paginatedResult);
 
     // console.log(Object.values(userParams).join('-'));
-    let params = this.setPaginationHeaders(this.userParams().pageNumber, this.userParams().pageSize);
+    let params = setPaginationHeaders(this.userParams().pageNumber, this.userParams().pageSize);
 
     params = params.append('minAge', this.userParams().minAge);
     params = params.append('maxAge', this.userParams().maxAge);
@@ -42,29 +44,29 @@ export class MembersService {
 
     return this.http.get<Member[]>(this.baseUrl + 'users', {observe: 'response', params}).subscribe({
       next: response => {
-        this.setPaginatedResponse(response);
+        setPaginatedResponse(response, this.paginatedResult);
         this.memberCache.set(Object.values(this.userParams()).join('-'), response);
       }
     })  
   }
 
-  private setPaginatedResponse(response: HttpResponse<Member[]>) {
-    this.paginatedResult.set({
-      items: response.body as Member[],
-      pagination: JSON.parse(response.headers.get('Pagination')!)
-    })
-  }
+  // private setPaginatedResponse(response: HttpResponse<Member[]>) {
+  //   this.paginatedResult.set({
+  //     items: response.body as Member[],
+  //     pagination: JSON.parse(response.headers.get('Pagination')!)
+  //   })
+  // }
 
-  private setPaginationHeaders(pageNumber: number, pageSize: number) {
-    let params = new HttpParams();
+  // private setPaginationHeaders(pageNumber: number, pageSize: number) {
+  //   let params = new HttpParams();
 
-    if (pageNumber && pageSize) {
-      params = params.append('pageNumber', pageNumber);
-      params = params.append('pageSize', pageSize);
-    }
+  //   if (pageNumber && pageSize) {
+  //     params = params.append('pageNumber', pageNumber);
+  //     params = params.append('pageSize', pageSize);
+  //   }
 
-    return params;
-  }
+  //   return params;
+  // }
 
   getMember(username: string) {
     // console.log(this.memberCache.values());
